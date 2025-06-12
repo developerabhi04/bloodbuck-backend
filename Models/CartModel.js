@@ -19,14 +19,6 @@ const CartSchema = new mongoose.Schema(
                     required: true,
                     min: 1,
                 },
-                sizes: {
-                    type: String,
-                    default: null,  // Allows null
-                },
-                seamSizes: {
-                    type: mongoose.Schema.Types.Mixed,
-                    default: null,  // Allows null or different types
-                },
                 colorName: {
                     type: String,  // Store the selected color name
                 },

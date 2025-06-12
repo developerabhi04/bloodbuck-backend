@@ -10,7 +10,7 @@ import catchAsyncErrors from "../middlewares/catchAsyncError.js";
 
 export const addToCart = async (req, res) => {
     try {
-        const { userId, productId, quantity, sizes, seamSizes, colorName } = req.body;
+        const { userId, productId, quantity, colorName } = req.body;
         if (!userId || !productId || quantity <= 0 || !colorName) {
             return res.status(400).json({ success: false, message: "Invalid data provided!" });
         }
@@ -29,16 +29,12 @@ export const addToCart = async (req, res) => {
         const existingItemIndex = cart.items.findIndex(
             (item) =>
                 item.productId.toString() === productId &&
-                String(item.sizes) === String(sizes) &&
-                String(item.seamSizes) === String(seamSizes) &&
                 item.colorName === colorName
         );
         if (existingItemIndex === -1) {
             cart.items.push({
                 productId,
                 quantity,
-                sizes: sizes || null,
-                seamSizes: seamSizes || null,
                 colorName,
             });
         } else {
@@ -91,11 +87,6 @@ export const fetchCartItems = async (req, res) => {
                             : null,
                 price: product.price,
                 colorOptions: product.colors.map((c) => c.colorName),
-                sizeOptions: variant.sizes || [],
-                seamSizeOptions: variant.seamSizes || [],
-                // Map stored fields to names that the frontend expects:
-                selectedSize: item.sizes || null,
-                selectedSeamSize: item.seamSizes || null,
                 selectedColorName: item.colorName,
                 quantity: item.quantity,
             };
@@ -112,7 +103,7 @@ export const fetchCartItems = async (req, res) => {
 // -----------------------------------------------------------------------------
 export const updateCartItemQty = async (req, res) => {
     try {
-        const { userId, productId, sizes, seamSizes, quantity, colorName } = req.body;
+        const { userId, productId, quantity, colorName } = req.body;
         if (!userId || !productId || quantity <= 0 || !colorName) {
             return res.status(400).json({ success: false, message: "Invalid data provided!" });
         }
@@ -123,8 +114,6 @@ export const updateCartItemQty = async (req, res) => {
         const existingItem = cart.items.find(
             (item) =>
                 item.productId.toString() === productId &&
-                String(item.sizes) === String(sizes) &&
-                String(item.seamSizes) === String(seamSizes) &&
                 item.colorName === colorName
         );
         if (!existingItem) {
@@ -150,32 +139,22 @@ export const updateCartItemQty = async (req, res) => {
 export const deleteCartItem = async (req, res) => {
     try {
         const { userId, productId } = req.params;
-        let { sizes, seamSizes, colorName } = req.query;
+        let { colorName } = req.query;
         if (!userId || !productId) {
             return res.status(400).json({ success: false, message: "UserId and productId are required!" });
         }
         if (!colorName) {
             return res.status(400).json({ success: false, message: "ColorName is required!" });
         }
-        sizes = sizes === undefined || sizes === "undefined" || sizes === "null" ? null : sizes;
-        seamSizes =
-            seamSizes === undefined || seamSizes === "undefined" || seamSizes === "null"
-                ? null
-                : isNaN(seamSizes)
-                    ? seamSizes
-                    : Number(seamSizes);
+        
         const cart = await Cart.findOne({ userId });
         if (!cart) {
             return res.status(404).json({ success: false, message: "Cart not found!" });
         }
         const initialLength = cart.items.length;
         cart.items = cart.items.filter((item) => {
-            const sizeMatch = String(item.sizes) === String(sizes);
-            const seamSizeMatch = String(item.seamSizes) === String(seamSizes);
             return !(
                 item.productId.toString() === productId &&
-                sizeMatch &&
-                seamSizeMatch &&
                 item.colorName === colorName
             );
         });

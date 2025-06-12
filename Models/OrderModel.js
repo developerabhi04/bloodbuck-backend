@@ -44,8 +44,8 @@ const schema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ["Paypal"],
-        default: "paypal",
+        enum: ["CashOnDelivery", "Razorpay"],
+        required: true,
     },
     status: {
         type: String,
