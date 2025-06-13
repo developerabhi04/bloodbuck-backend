@@ -77,7 +77,6 @@ import cartRoute from "./Routes/CartRoute.js";
 import wishlistRoute from "./Routes/WishlistRoute.js";
 import paypalRoute from "./Routes/PaymentRoute.js";
 import reviewRoute from "./Routes/ReviewRoute.js";
-import EventRoute from "./Routes/EventRoute.js";
 import adminStaticsRoute from "./Routes/AdminStaticsRoute.js";
 
 
@@ -96,7 +95,6 @@ app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/wishlist", wishlistRoute);
 app.use("/api/v1/payment", paypalRoute);
 app.use("/api/v1/reviews", reviewRoute);
-app.use("/api/v1/event", EventRoute);
 app.use("/api/v1/adminstats", adminStaticsRoute);
 
 // Use the custom error handling middleware
